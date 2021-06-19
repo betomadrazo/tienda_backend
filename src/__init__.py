@@ -74,7 +74,7 @@ def users_action(username):
             mimetype='application/json')
 
 
-@app.route(_url('/usuarios/login'), methods=['POST'])
+@app.route(_url('/api/usuarios/login'), methods=['POST'])
 def login():
     raw_user = request.get_json()
     user_exists = users.find({'nombre': raw_user['nombre']})
@@ -105,7 +105,7 @@ def login():
         mimetype='application/json')
 
 
-@app.route(_url('/usuario'), methods=["GET", "POST"])
+@app.route(_url('/api/usuario'), methods=["GET", "POST"])
 def user():
     if request.method == 'POST':
         """Agrega un usuario a la base de datos.
