@@ -32,8 +32,6 @@ class Usuario(BaseModel):
         provided_password = self.contraseña.encode('utf-8')
         hashed_password = hashed_password.encode('utf-8')
 
-        print(provided_password, ' vs ', hashed_password)
-
         if bcrypt.checkpw(hashed_password, provided_password):
             return True
         return False

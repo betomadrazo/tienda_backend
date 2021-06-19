@@ -12,18 +12,22 @@ from .models.objectid import PydanticObjectId
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = os.environ.get('MONGO_URI')
+app.config['APPLICATION_ROOT'] = os.environ.get('BASE_URL')
+
+def _url(path):
+    return app.config['APPLICATION_ROOT'] + path
 
 mongo = PyMongo(app)
 
 users: Collection = mongo.db.usuarios
 
 
-@app.route('/', methods=['GET'])
+@app.route(_url('/api/'), methods=['GET'])
 def index():
     return jsonify({'hello': 'world'})
 
 
-@app.route('/usuarios', methods=['GET'])
+@app.route(_url('/api/usuarios'), methods=['GET'])
 def get_users():
     all_users = users.find()
     response = json_util.dumps(all_users)
@@ -31,7 +35,7 @@ def get_users():
     return Response(response, status=200, mimetype='application/json')
 
 
-@app.route('/usuarios/<string:username>', methods=["GET", "PUT", "DELETE"])
+@app.route(_url('/api/usuarios/<string:username>'), methods=["GET", "PUT", "DELETE"])
 def users_action(username):
     if request.method == 'GET':
         user_from_db = users.find({'nombre': username})
@@ -70,7 +74,7 @@ def users_action(username):
             mimetype='application/json')
 
 
-@app.route('/usuarios/login', methods=['POST'])
+@app.route(_url('/usuarios/login'), methods=['POST'])
 def login():
     raw_user = request.get_json()
     user_exists = users.find({'nombre': raw_user['nombre']})
@@ -101,7 +105,7 @@ def login():
         mimetype='application/json')
 
 
-@app.route('/usuario', methods=["GET", "POST"])
+@app.route(_url('/usuario'), methods=["GET", "POST"])
 def user():
     if request.method == 'POST':
         """Agrega un usuario a la base de datos.
