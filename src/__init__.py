@@ -9,10 +9,14 @@ from pymongo.collection import Collection, ReturnDocument
 from .models.Usuario import Usuario
 from .models.objectid import PydanticObjectId
 
+from flask_cors import CORS
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = os.environ.get('MONGO_URI')
 app.config['APPLICATION_ROOT'] = os.environ.get('BASE_URL')
+
+app.config['CORS_HEADERS'] = 'Content-Type'
+CORS(app)
 
 def _url(path):
     return app.config['APPLICATION_ROOT'] + path
@@ -73,7 +77,6 @@ def users_action(username):
             status=200,
             mimetype='application/json')
 
-
 @app.route(_url('/api/usuarios/login'), methods=['POST'])
 def login():
     raw_user = request.get_json()
@@ -94,6 +97,9 @@ def login():
         return Response(
             json_util.dumps({
                 'message': 'Bienvenido {}'.format(raw_user['nombre']),
+                'id': user.id,
+                'nombre': user.nombre,
+                'correo': user.correo,
                 'error': False}),
             status=200,
             mimetype='application/json')
@@ -151,6 +157,9 @@ def user():
         return Response(
             json_util.dumps({
                 'message': 'Usuario creado',
+                'id': user.id,
+                'nombre': user.nombre,
+                'correo': user.correo,
                 'error': False}),
             status=200,
             mimetype='application/json')
