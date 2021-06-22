@@ -18,7 +18,7 @@ app.config['APPLICATION_ROOT'] = os.environ.get('BASE_URL')
 app.config['CORS_HEADERS'] = 'Content-Type'
 CORS(app)
 
-app.config['JWT_SECRET_KEY'] = 'equis' # os.environ.get('JWT_SECRET_KEY')
+app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY')
 
 jwt = JWTManager(app)
 
@@ -40,8 +40,6 @@ app.register_blueprint(usuarios_api)
 
 @app.route(_url('/api/'), methods=['GET'])
 def say_hi():
-    jwt_token = create_jwt(identity='60d156be235aa22bdaa66d24')
-    print(jwt_token)
     return Response(
         json_util.dumps({
             'message': 'Hola.'}),

@@ -40,7 +40,7 @@ def auth_user():
 
     if user.check_password(raw_user['contraseña']):
         try:
-            # jwt_token = create_jwt(identity=str(user.id))
+            jwt_token = create_jwt(identity=str(user.id))
 
             return Response(
                 json_util.dumps({
@@ -49,8 +49,8 @@ def auth_user():
                     'nombre': user.nombre,
                     'correo': user.correo,
                     'error': False,
+                    'jwt_token': jwt_token
                     }),
-                    # 'jwt_token': jwt_token
                     status=200,
                     mimetype='application/json')
 
@@ -58,7 +58,7 @@ def auth_user():
             return Response(
                 json_util.dumps({
                     'message': e}),
-                status=500,
+                status=200,
                 mimetype='application/json')
 
     return Response(
