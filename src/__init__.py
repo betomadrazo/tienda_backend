@@ -40,6 +40,8 @@ app.register_blueprint(usuarios_api)
 
 @app.route(_url('/api/'), methods=['GET'])
 def say_hi():
+    jwt_token = create_jwt(identity='60d156be235aa22bdaa66d24')
+    print(jwt_token)
     return Response(
         json_util.dumps({
             'message': 'Hola.'}),
