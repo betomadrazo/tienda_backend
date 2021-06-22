@@ -6,6 +6,9 @@ from bson import json_util
 from bson.objectid import ObjectId
 from pymongo.collection import Collection, ReturnDocument
 
+from flask_jwt_simple import (
+    JWTManager, jwt_required, create_jwt, get_jwt_identity)
+
 from .models.Usuario import Usuario
 from .models.objectid import PydanticObjectId
 
@@ -17,6 +20,11 @@ app.config['APPLICATION_ROOT'] = os.environ.get('BASE_URL')
 
 app.config['CORS_HEADERS'] = 'Content-Type'
 CORS(app)
+
+app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY')
+
+jwt = JWTManager(app)
+
 
 def _url(path):
     return app.config['APPLICATION_ROOT'] + path
@@ -32,6 +40,7 @@ def index():
 
 
 @app.route(_url('/api/usuarios'), methods=['GET'])
+@jwt_required
 def get_users():
     all_users = users.find()
     response = json_util.dumps(all_users)
@@ -94,13 +103,18 @@ def login():
     user = Usuario(**user_from_db)
 
     if user.check_password(raw_user['contraseña']):
+
+        jwt_token = create_jwt(identity=str(user.id))
+
         return Response(
             json_util.dumps({
                 'message': 'Bienvenido {}'.format(raw_user['nombre']),
                 'id': user.id,
                 'nombre': user.nombre,
                 'correo': user.correo,
-                'error': False}),
+                'error': False,
+                'jwt_token': jwt_token}),
+
             status=200,
             mimetype='application/json')
     return Response(
