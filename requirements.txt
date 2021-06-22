@@ -1,6 +1,9 @@
+autopep8==1.5.7
 bcrypt==3.2.0
 dnspython==2.1.0
 fastapi==0.65.2
+flask-cors==3.0.10
+flask-jwt-simple==0.0.3
 flask-pymongo==2.3.0
 pip-chill==1.0.1
 python-dotenv==0.17.1
