@@ -56,7 +56,7 @@ def auth_user():
         except Exception as e:
             return Response(
                 json_util.dumps({
-                    'message': str(e)}),
+                    'message': e}),
                 status=500,
                 mimetype='application/json')
 
