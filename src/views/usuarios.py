@@ -39,20 +39,27 @@ def auth_user():
     user = Usuario(**user_from_db)
 
     if user.check_password(raw_user['contraseña']):
+        try:
+            jwt_token = create_jwt(identity=str(user.id))
 
-        jwt_token = create_jwt(identity=str(user.id))
+            return Response(
+                json_util.dumps({
+                    'message': 'Bienvenido {}'.format(raw_user['nombre']),
+                    'id': user.id,
+                    'nombre': user.nombre,
+                    'correo': user.correo,
+                    'error': False,
+                    'jwt_token': jwt_token}),
+                    status=200,
+                    mimetype='application/json')
 
-        return Response(
-            json_util.dumps({
-                'message': 'Bienvenido {}'.format(raw_user['nombre']),
-                'id': user.id,
-                'nombre': user.nombre,
-                'correo': user.correo,
-                'error': False,
-                'jwt_token': jwt_token}),
+        except Exception as e:
+            return Response(
+                json_util.dumps({
+                    'message': str(e)}),
+                status=500,
+                mimetype='application/json')
 
-            status=200,
-            mimetype='application/json')
     return Response(
         json_util.dumps({
             'message': 'Nombre de usuario o contraseña incorrectos',
