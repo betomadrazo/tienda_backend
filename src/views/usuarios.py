@@ -22,8 +22,8 @@ def get_users():
     return Response(response, status=200, mimetype='application/json')
 
 
-@usuarios_api.route(_url('/api/usuarios/login'), methods=['POST'])
-def login():
+@usuarios_api.route(_url('/api/autenticar'), methods=['POST'])
+def auth_user():
     raw_user = request.get_json()
     user_exists = users.find({'nombre': raw_user['nombre']})
 
