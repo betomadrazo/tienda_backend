@@ -38,5 +38,14 @@ app.register_blueprint(articulos_api)
 app.register_blueprint(usuarios_api)
 
 
+@app.route(_url('/api/'), methods=['GET'])
+def say_hi():
+    return Response(
+        json_util.dumps({
+            'message': 'Hola.'}),
+        status=200,
+        mimetype='application/json')
+
+
 if __name__ == '__main__':
     app.run(debug=True)
