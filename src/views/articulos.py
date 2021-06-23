@@ -5,7 +5,7 @@ from bson import json_util
 from bson.objectid import ObjectId
 
 from .. import _url, users, articles
-from ..models.Articulo import Articulo
+from ..models.Articulo import Articulo, get_image_name, convert_base64_to_image
 from ..models.objectid import PydanticObjectId
 
 from .. import app, mongo, _url
@@ -40,7 +40,12 @@ def articles_actions():
 
         raw_article['idUsuario'] = user_id
         article = Articulo(**raw_article)
-        article.convert_base64_to_image(request.host)
+
+        image_name = get_image_name(article.nombre)
+        article.imagen = convert_base64_to_image(
+            request.url_root, article.imagen, image_name)
+
+        # article.convert_base64_to_image(request.url_root)
         insert_article = articles.insert_one(article.to_json())
         article.id = PydanticObjectId(str(insert_article.inserted_id))
 
@@ -96,6 +101,13 @@ def article_actions(article_id):
         updatable_items = {
             k: v for (k, v) in raw_article.items()
             if k in ('nombre', 'imagen', 'precio', 'descripcion')}
+
+        # Si hay imagen para actualizar, convertirla en archivo
+        if 'imagen' in updatable_items:
+            image_name = get_image_name(user_id)
+            updatable_items['imagen'] = convert_base64_to_image(
+            request.url_root, updatable_items['imagen'], image_name)
+
 
         update_article = articles.update_one(
             {'_id': ObjectId(article_id)}, {'$set': updatable_items})
