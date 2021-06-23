@@ -40,6 +40,7 @@ def articles_actions():
 
         raw_article['idUsuario'] = user_id
         article = Articulo(**raw_article)
+        article.convert_base64_to_image(request.host)
         insert_article = articles.insert_one(article.to_json())
         article.id = PydanticObjectId(str(insert_article.inserted_id))
 

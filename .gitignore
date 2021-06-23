@@ -5,3 +5,5 @@ __pycache__/
 
 # This gets env variables to gunicorn
 config.py
+
+static/

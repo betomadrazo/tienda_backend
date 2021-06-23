@@ -1,3 +1,9 @@
+import os
+import base64
+from PIL import Image
+from io import BytesIO
+from datetime import datetime
+
 from fastapi.encoders import jsonable_encoder
 
 from pydantic import BaseModel, Field
@@ -5,6 +11,7 @@ from typing import Optional
 from datetime import datetime
 
 from .objectid import PydanticObjectId
+from .. import app
 
 class Articulo(BaseModel):
     id: Optional[PydanticObjectId] = Field(None, alias="_id")
@@ -22,3 +29,23 @@ class Articulo(BaseModel):
         if data.get("_id") is None:
             data.pop("_id", None)
         return data
+
+    def convert_base64_to_image(self, host):
+        file_name = self.get_image_name()
+
+        im = Image.open(BytesIO(base64.b64decode(self.imagen)))
+        im.save(
+            os.path.join(
+                app.root_path,
+                os.environ.get('UPLOAD_FOLDER'),
+                file_name)
+            , 'PNG')
+        self.imagen = "{}/{}/{}".format(
+            host, os.environ.get('UPLOAD_FOLDER'), file_name)
+
+    def get_image_name(self):
+        now = datetime.now()
+        date_time = now.strftime("%m%d%y%H%M%S")
+
+        return "{}_{}.png".format(
+            self.nombre.lower().replace(' ', '_'), date_time)
