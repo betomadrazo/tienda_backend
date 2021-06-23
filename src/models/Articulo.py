@@ -31,17 +31,18 @@ class Articulo(BaseModel):
         return data
 
     def convert_base64_to_image(self, host):
+        images_folder = 'articles_images'
         file_name = self.get_image_name()
 
         im = Image.open(BytesIO(base64.b64decode(self.imagen)))
         im.save(
             os.path.join(
-                app.root_path,
-                os.environ.get('UPLOAD_FOLDER'),
+                os.environ.get('STATIC_FOLDER'),
+                images_folder,
                 file_name)
             , 'PNG')
-        self.imagen = "{}/{}/{}".format(
-            host, os.environ.get('UPLOAD_FOLDER'), file_name)
+        self.imagen = "{}/{}/{}/{}".format(
+            host, 'static', images_folder, file_name)
 
     def get_image_name(self):
         now = datetime.now()

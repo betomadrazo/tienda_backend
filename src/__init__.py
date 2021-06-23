@@ -15,8 +15,6 @@ app = Flask(__name__)
 app.config['MONGO_URI'] = os.environ.get('MONGO_URI')
 app.config['APPLICATION_ROOT'] = os.environ.get('BASE_URL')
 
-app.config['UPLOAD_FOLDER'] = os.environ.get('UPLOAD_FOLDER')
-
 app.config['CORS_HEADERS'] = 'Content-Type'
 CORS(app)
 
