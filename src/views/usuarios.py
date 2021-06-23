@@ -14,7 +14,6 @@ usuarios_api = Blueprint('usuarios_api', __name__)
 
 
 @usuarios_api.route(_url('/api/usuarios'), methods=['GET'])
-# @jwt_required
 def get_users():
     all_users = users.find()
     response = json_util.dumps(all_users)
@@ -58,7 +57,7 @@ def auth_user():
             return Response(
                 json_util.dumps({
                     'message': e}),
-                status=200,
+                status=500,
                 mimetype='application/json')
 
     return Response(
